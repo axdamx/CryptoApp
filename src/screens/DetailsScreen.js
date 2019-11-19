@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet} from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
-// import { SectionGrid } from 'react-native-super-grid';
 
 class DetailsScreen extends React.Component {
     render() {
@@ -21,7 +20,7 @@ class DetailsScreen extends React.Component {
           ];
         return(
             <View style={{flex:1, backgroundColor: '#1f3252'}}>
-                <Text style={{ textAlign: "center", paddingTop: 35, fontSize: 35,fontWeight: 'bold', color: 'white'}}> {this.props.navigation.getParam('name', 'NO-ID')} | {this.props.navigation.getParam('symbol', 'NO-ID')} </Text>
+                <Text style={{ textAlign: "center", paddingTop: 35, fontSize: 35,fontWeight: 'bold', color: 'white'}}> {this.props.navigation.getParam('symbol', 'NO-ID')} | {this.props.navigation.getParam('name', 'NO-ID')} </Text>
             <FlatGrid
                 itemDimension={150}
                 items={items}
@@ -31,9 +30,9 @@ class DetailsScreen extends React.Component {
                     <Text style={styles.itemName}>{item.name}</Text>
                     <Text style={styles.itemCode}>{item.code}</Text>
                 </View>
-                )}/>
+                )}
+                /> 
             </View>
-
             );
         }
 }

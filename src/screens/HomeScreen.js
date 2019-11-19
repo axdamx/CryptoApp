@@ -1,14 +1,24 @@
 import React from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Button, Alert, RefreshControl, TextInput } from 'react-native';
 
 class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { isLoading: true, dataSource: []}
+        this.state = { 
+            isLoading: true, 
+            isRefreshing: false,
+            dataSource: [],
+            filteredData: [],
+            searchText: ''
+        }
     }
 
     componentDidMount() {
+        this.fetchApi()
+    }
+
+    fetchApi = () => {
         fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest', {
             method: 'GET',
             headers: {
@@ -17,10 +27,23 @@ class HomeScreen extends React.Component {
         })
         .then(res => res.json())
         .then((data) => {
-            this.setState({ dataSource: data, isLoading: false})
-            console.log(this.state.dataSource)
+            this.setState({ dataSource: data, isLoading: false,  isRefreshing: false})
+            // console.log(this.state.dataSource)
         }).catch(console.log)
     }
+    
+    search = (searchText) => {
+        this.setState({searchText: searchText});
+        let filteredData = this.state.dataSource.data.filter(function (item) {
+            return item.name.includes(searchText)
+        })
+        this.setState({filteredData: filteredData})
+    }
+
+      onRefresh() {
+        this.setState({ isRefreshing: true }); 
+        this.fetchApi()
+      }
 
       renderItem = ({item}) => {
         const usdPrice = item.quote.USD.price
@@ -52,11 +75,39 @@ class HomeScreen extends React.Component {
                 <View style = {style.cardViewStyle}>
                     <View style={style.cardStyle}>
                         <Text style={style.textStyle}>{item.symbol} | {item.name}</Text>
-                        {percent24h.toFixed(2) > 0 ? <Text style={{color:'green'}}>24h: {percent24h.toFixed(2)} % </Text>: <Text style={{color: 'red'}}>24h: {percent24h.toFixed(2)} %</Text> }
+                        {percent24h.toFixed(2) > 0 ? <Text style={style.textStyle}>24h: <Text style={{color: 'green'}}> {percent24h.toFixed(2)}% 
+                         {/* <Icon
+                        name='caretup'
+                        color='green'
+                        size={13}
+                        type="antdesign"
+                        /> */}
+                        </Text></Text>: <Text style={style.textStyle}>24h: <Text style={{color: 'red'}}> {percent24h.toFixed(2)}% 
+                         {/* <Icon
+                        name='caretdown'
+                        color='red'
+                        size={13}
+                        type="antdesign"
+                        /> */}
+                        </Text></Text> }
                     </View>
                     <View style={style.cardStyle}>
                         <Text style={style.textStyle}> {usdPrice.toFixed(2)} $ </Text>
-                        {percent7d.toFixed(2) > 0 ? <Text style={{color:'green'}}>7d: {percent7d.toFixed(2)} % </Text>: <Text style={{color: 'red'}}>7d: {percent7d.toFixed(2)} %</Text> }
+                        {percent7d.toFixed(2) > 0 ? <Text style={style.textStyle}>7d: <Text style={{color: 'green'}}> {percent7d.toFixed(2)}% 
+                         {/* <Icon
+                        name='caretup'
+                        color='green'
+                        size={13}
+                        type="antdesign"
+                        /> */}
+                        </Text></Text>: <Text style={style.textStyle}>7d: <Text style={{color: 'red'}}> {percent7d.toFixed(2)}%
+                         {/* <Icon
+                        name='caretdown'
+                        color='red'
+                        size={13}
+                        type="antdesign"
+                        /> */}
+                        </Text></Text> }
                     </View>
                 </View>
             </TouchableOpacity>
@@ -66,17 +117,32 @@ class HomeScreen extends React.Component {
     render() {
         if(this.state.isLoading){
             return(
-                <View>
-                    <ActivityIndicator />
+                <View style={{...StyleSheet.absoluteFill, alignItems:"center", justifyContent: "center"}}>
+                    <ActivityIndicator size="large" color='white'/>
                 </View>
             )
         }
         return(
-            <View style={{backgroundColor: '#1f3252'}}>
+            <View style={{backgroundColor: '#1f3252', flex:1}}>
+            <TextInput
+                style={style.searchBarStyle}
+                onChangeText={this.search}
+                value={this.state.searchText}
+                placeholder="Search Here"
+                placeholderTextColor= 'white'
+            />
                 <FlatList 
-                    data={this.state.dataSource.data}
+                    data={this.state.filteredData && this.state.filteredData.length > 0 ? this.state.filteredData : this.state.dataSource.data}
                     renderItem={this.renderItem}
                     keyExtractor={item => item.description}
+                    extraData={this.state}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={this.state.isRefreshing}
+                          onRefresh={this.onRefresh.bind(this)}
+                        />
+                      }
+                    onEndReachedThreshold={0.4}
                 />
             </View>
         )
@@ -101,6 +167,16 @@ const style = StyleSheet.create({
         padding: 25, 
         margin: 10,
         backgroundColor: "white"
+    },
+    searchBarStyle: {
+        color: 'white',
+        backgroundColor: '#304c7a',
+        paddingHorizontal: 10,
+        margin: 10,
+        height: 50,
+        borderColor: "gray",
+        borderWidth: 1,
+        fontSize: 20
     }
 })
 
