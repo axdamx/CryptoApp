@@ -32,7 +32,7 @@ class HomeScreen extends React.Component {
         }).catch(console.log)
     }
     
-    search = (searchText) => {
+    onSearch = (searchText) => {
         this.setState({searchText: searchText});
         let filteredData = this.state.dataSource.data.filter(function (item) {
             return item.name.includes(searchText)
@@ -75,14 +75,14 @@ class HomeScreen extends React.Component {
                 <View style = {style.cardViewStyle}>
                     <View style={style.cardStyle}>
                         <Text style={style.textStyle}>{item.symbol} | {item.name}</Text>
-                        {percent24h.toFixed(2) > 0 ? <Text style={style.textStyle}>24h: <Text style={{color: 'green'}}> {percent24h.toFixed(2)}% 
+                        {percent24h.toFixed(2) > 0 ? <Text style={style.textStyle}>24h: <Text style={{color: 'green'}}> {percent24h.toFixed(2)}%  ⇈ 
                          {/* <Icon
                         name='caretup'
                         color='green'
                         size={13}
                         type="antdesign"
                         /> */}
-                        </Text></Text>: <Text style={style.textStyle}>24h: <Text style={{color: 'red'}}> {percent24h.toFixed(2)}% 
+                        </Text></Text>: <Text style={style.textStyle}>24h: <Text style={{color: 'red'}}> {percent24h.toFixed(2)}%  ⇊
                          {/* <Icon
                         name='caretdown'
                         color='red'
@@ -93,14 +93,14 @@ class HomeScreen extends React.Component {
                     </View>
                     <View style={style.cardStyle}>
                         <Text style={style.textStyle}> {usdPrice.toFixed(2)} $ </Text>
-                        {percent7d.toFixed(2) > 0 ? <Text style={style.textStyle}>7d: <Text style={{color: 'green'}}> {percent7d.toFixed(2)}% 
+                        {percent7d.toFixed(2) > 0 ? <Text style={style.textStyle}>7d: <Text style={{color: 'green'}}> {percent7d.toFixed(2)}%  ⇈ 
                          {/* <Icon
                         name='caretup'
                         color='green'
                         size={13}
                         type="antdesign"
                         /> */}
-                        </Text></Text>: <Text style={style.textStyle}>7d: <Text style={{color: 'red'}}> {percent7d.toFixed(2)}%
+                        </Text></Text>: <Text style={style.textStyle}>7d: <Text style={{color: 'red'}}> {percent7d.toFixed(2)}%  ⇊
                          {/* <Icon
                         name='caretdown'
                         color='red'
@@ -126,9 +126,9 @@ class HomeScreen extends React.Component {
             <View style={{backgroundColor: '#1f3252', flex:1}}>
             <TextInput
                 style={style.searchBarStyle}
-                onChangeText={this.search}
+                onChangeText={this.onSearch}
                 value={this.state.searchText}
-                placeholder="Search Here"
+                placeholder="Search Here.."
                 placeholderTextColor= 'white'
             />
                 <FlatList 
